@@ -39,11 +39,7 @@ public class NoteController {
     @GetMapping("/{id}")
     public ResponseEntity<Note> getNoteById(@PathVariable Long id) {
         Optional<Note> note = noteService.getNoteById(id);
-        if (note.isPresent()) {
-            return ResponseEntity.ok(note.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return note.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -54,5 +50,11 @@ public class NoteController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/duplicate/{id}")
+    public ResponseEntity<Note> duplicateNoteById(@PathVariable Long id) {
+        Optional<Note> noteCopy = noteService.duplicateNoteById(id);
+        return noteCopy.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

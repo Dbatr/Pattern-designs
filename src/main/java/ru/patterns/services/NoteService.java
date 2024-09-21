@@ -68,4 +68,17 @@ public class NoteService {
     public void deleteNoteById(Long id) {
         noteRepository.deleteById(id);
     }
+
+    // Метод для дублирования заметки по id
+    public Optional<Note> duplicateNoteById(Long id) {
+        Optional<Note> existingNote = noteRepository.findById(id);
+
+        if (existingNote.isPresent()) {
+            Note noteCopy = (Note) existingNote.get().copy();  // Копируем заметку
+            noteRepository.save(noteCopy);
+            return Optional.of(noteCopy);
+        } else {
+            return Optional.empty();
+        }
+    }
 }

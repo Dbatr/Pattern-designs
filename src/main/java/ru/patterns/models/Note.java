@@ -9,10 +9,11 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotBlank;
+import ru.patterns.models.prototype.Prototype;
 
 @Entity
 @Table(name = "notes")
-public class Note {
+public class Note implements Prototype {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,5 +68,10 @@ public class Note {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public Prototype copy() {
+        return new Note(this.title, this.content);
     }
 }

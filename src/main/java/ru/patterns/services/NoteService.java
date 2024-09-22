@@ -69,7 +69,14 @@ public class NoteService {
         noteRepository.deleteById(id);
     }
 
-    // Метод для дублирования заметки по id
+    /**
+     * Создает дубликат существующей заметки по ее уникальному идентификатору.
+     * Использует паттерн проектирования Prototype для копирования объекта заметки.
+     *
+     * @param id Уникальный идентификатор заметки, которую нужно продублировать.
+     * @return Optional, содержащий дубликат заметки, если оригинальная заметка найдена,
+     *         иначе возвращается пустой Optional.
+     */
     public Optional<Note> duplicateNoteById(Long id) {
         Optional<Note> existingNote = noteRepository.findById(id);
 

@@ -70,6 +70,7 @@ public class Note implements Prototype {
         this.timestamp = timestamp;
     }
 
+    // Паттерн проектирования Prototype
     @Override
     public Prototype copy() {
         return new Note(this.title, this.content);

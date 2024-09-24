@@ -2,6 +2,7 @@
 
 - [Задание 2. Singleton](#задание-2-singleton)
 - [Задание 3. Prototype](#задание-3-prototype)
+- [Задание 4. Static Factory Method](#задание-4-static-factory-method)
 
 ***
 
@@ -191,3 +192,50 @@ public class Note implements Prototype {
         return new Note(this.title, this.content);
     }
 }
+```
+***
+
+## Задание 4. Static Factory Method
+
+### Описание
+
+В этом разделе описан класс [`NoteUtils`](./src/main/java/ru/patterns/utils/NoteUtils.java), который реализует паттерн проектирования Static Factory Method. Этот паттерн предоставляет статические методы для создания и изменения объектов, что улучшает читаемость и управление кодом.
+
+### Причины выбора Static Factory Method для класса `NoteUtils`
+
+1. **Упрощение создания объектов**: Паттерн Static Factory Method позволяет создавать и изменять объекты через статические методы, что упрощает код и делает его более понятным. Вместо создания объектов через конструктор, мы можем использовать методы с ясными названиями.
+
+2. **Удобство использования**: Статические методы могут быть вызваны без необходимости создания экземпляра класса, что делает их удобными для использования в различных частях приложения.
+
+### Признаки реализации Static Factory Method в классе `NoteUtils`
+
+- **Статические методы для изменения свойств**: В классе определены статические методы `changeTitle`, `changeContent` и `updateNote`, которые изменяют соответствующие свойства объекта `Note`.
+
+- **Приватный конструктор**: Конструктор класса `NoteUtils` объявлен как `private`, что предотвращает создание экземпляров этого класса. Это является стандартной практикой для утилитарных классов, содержащих только статические методы.
+
+### Пример кода класса `NoteUtils`:
+
+```java
+/**
+ * Паттерн Static Factory Method.
+ */
+public class NoteUtils {
+
+    private NoteUtils() {
+    }
+
+    public static void changeTitle(Note note, String newTitle) {
+        note.setTitle(newTitle);
+    }
+
+    public static void changeContent(Note note, String newContent) {
+        note.setContent(newContent);
+    }
+
+    public static void updateNote(Note note, String newTitle, String newContent) {
+        note.setTitle(newTitle);
+        note.setContent(newContent);
+        note.setTimestamp(LocalDateTime.now());
+    }
+}
+```

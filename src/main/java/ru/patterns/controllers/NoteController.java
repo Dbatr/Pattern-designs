@@ -57,4 +57,10 @@ public class NoteController {
         Optional<Note> noteCopy = noteService.duplicateNoteById(id);
         return noteCopy.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Note> updateNote(@PathVariable Long id, @RequestBody NoteDTO noteDto) {
+        Optional<Note> updatedNote = noteService.updateNoteById(id, noteDto.getTitle(), noteDto.getContent());
+        return updatedNote.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import ru.patterns.repositories.NoteRepository;
+import ru.patterns.utils.NoteUtils;
 
 /**
  * Паттерн Singleton.
@@ -39,7 +40,7 @@ public class NoteService {
     /**
      * Добавляет новую заметку в базу данных.
      * 
-     * @param note Заметка, которую нужно добавить.
+     * @param noteDto Заметка, которую нужно добавить.
      * @return Сохраненная заметка.
      */
     public Note addNote(NoteDTO noteDto) {
@@ -84,6 +85,30 @@ public class NoteService {
             Note noteCopy = (Note) existingNote.get().copy();  // Копируем заметку
             noteRepository.save(noteCopy);
             return Optional.of(noteCopy);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Обновляет существующую заметку по ее уникальному идентификатору.
+     * Использует статический фабричный метод для изменения заголовка и содержания.
+     *
+     * @param id Уникальный идентификатор заметки, которую нужно обновить.
+     * @param newTitle Новый заголовок для заметки.
+     * @param newContent Новое содержание для заметки.
+     * @return Optional, содержащий обновленную заметку, если оригинальная заметка найдена,
+     *         иначе возвращается пустой Optional.
+     */
+    public Optional<Note> updateNoteById(Long id, String newTitle, String newContent) {
+        Optional<Note> existingNote = noteRepository.findById(id);
+
+        if (existingNote.isPresent()) {
+            Note noteToUpdate = existingNote.get();
+            NoteUtils.updateNote(noteToUpdate, newTitle, newContent);
+            noteRepository.save(noteToUpdate);
+
+            return Optional.of(noteToUpdate);
         } else {
             return Optional.empty();
         }

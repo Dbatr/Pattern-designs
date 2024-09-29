@@ -3,6 +3,7 @@
 - [Задание 2. Singleton](#задание-2-singleton)
 - [Задание 3. Prototype](#задание-3-prototype)
 - [Задание 4. Static Factory Method](#задание-4-static-factory-method)
+- [Задание 5. Builder](#задание-5-builder)
 
 ***
 
@@ -236,6 +237,55 @@ public class NoteUtils {
         note.setTitle(newTitle);
         note.setContent(newContent);
         note.setTimestamp(LocalDateTime.now());
+    }
+}
+```
+
+
+## Задание 5. Builder
+
+### Описание
+
+В этом разделе описан класс [`SwaggerConfig`](./src/main/java/ru/patterns/config/SwaggerConfig.java), который реализует паттерн проектирования Builder. Паттерн Builder предоставляет способ пошагового создания сложных объектов, позволяя избежать необходимости передавать множество параметров в конструктор.
+
+### Причины выбора Builder для класса `SwaggerConfig`
+
+1. **Упрощение конфигурации**: Использование паттерна Builder в `SwaggerConfig` упрощает процесс настройки групп API для Swagger. Вместо создания экземпляров с помощью длинного списка параметров, вы можете пошагово настраивать объект, что делает код более понятным и поддерживаемым.
+
+2. **Повышение читабельности кода**: Паттерн Builder позволяет явно указывать, какие параметры вы настраиваете для объекта. Это упрощает понимание конфигурации и ее последующее редактирование, особенно если в будущем потребуется добавить новые параметры.
+
+
+### Признаки реализации Builder в классе `SwaggerConfig`
+
+- **Использование методов для настройки параметров**: В классе `SwaggerConfig` используются методы `group()`, `packagesToScan()`, и `pathsToMatch()` для пошаговой настройки экземпляра `GroupedOpenApi`. Это позволяет четко структурировать код и легко добавлять новые параметры при необходимости.
+
+- **Финальный метод `build()`**: Метод `build()` используется для создания окончательного экземпляра объекта `GroupedOpenApi`. Это явный сигнал о том, что все необходимые параметры были установлены, и объект готов к использованию.
+
+### Пример кода класса `SwaggerConfig`:
+
+```java
+/**
+ * Паттерн Builder.
+ */
+@Configuration
+public class SwaggerConfig {
+
+    @Bean
+    public GroupedOpenApi notesApi() {
+        return GroupedOpenApi.builder()
+                .group("notes-api")
+                .packagesToScan("ru.patterns.controllers")
+                .pathsToMatch("/notes/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi homeApi() {
+        return GroupedOpenApi.builder()
+                .group("home-api")
+                .packagesToScan("ru.patterns.controllers")
+                .pathsToMatch("/")
+                .build();
     }
 }
 ```

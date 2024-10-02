@@ -27,4 +27,13 @@ public class SwaggerConfig {
                 .pathsToMatch("/")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi canvasApi() {
+        return GroupedOpenApi.builder()
+                .group("canvas-api")
+                .packagesToScan("ru.patterns.controllers")
+                .pathsToMatch("/canvas/**")
+                .build();
+    }
 }

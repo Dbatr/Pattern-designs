@@ -4,6 +4,7 @@
 - [Задание 3. Prototype](#задание-3-prototype)
 - [Задание 4. Static Factory Method](#задание-4-static-factory-method)
 - [Задание 5. Builder](#задание-5-builder)
+- [Задание 6. Factory Method](#задание-6-factory-method)
 
 ***
 
@@ -286,6 +287,70 @@ public class SwaggerConfig {
                 .packagesToScan("ru.patterns.controllers")
                 .pathsToMatch("/")
                 .build();
+    }
+}
+```
+
+
+## Задание 6. Factory Method
+
+### Описание
+
+В этом разделе описаны классы и интерфейсы, которые реализуют паттерн проектирования **Factory Method** для создания объектов различных форм в приложении с использованием класса [`Canvas`](./src/main/java/ru/patterns/models/Canvas.java). Паттерн Factory Method предоставляет интерфейс для создания объектов в суперклассе, позволяя подклассам изменять тип создаваемого объекта.
+
+### Причины выбора Factory Method для создания фигур
+
+1. **Отделение создания объектов от их использования**: Паттерн Factory Method позволяет отделить логику создания фигур от их использования. Это упрощает управление созданием объектов и улучшает гибкость кода, поскольку детали создания могут быть изменены, не влияя на остальную часть приложения.
+
+2. **Поддержка расширяемости**: Легко добавлять новые типы фигур, просто создавая новые реализации интерфейса [`ShapeFactory`](./src/main/java/ru/patterns/factory/ShapeFactory.java), не меняя существующий код. Это позволяет расширять функциональность приложения, не нарушая уже работающий функционал.
+
+
+### Признаки реализации Factory Method в классе
+
+- **Интерфейс [`ShapeFactory`](./src/main/java/ru/patterns/factory/ShapeFactory.java)**  **: Этот интерфейс определяет метод `createShape()`, который должен быть реализован всеми конкретными фабриками. Это позволяет создавать различные формы, не указывая конкретные классы, которые будут созданы.
+
+- **Конкретные фабрики**: Классы [`CircleFactory`](./src/main/java/ru/patterns/factory/CircleFactory.java) и [`RectangleFactory`](./src/main/java/ru/patterns/factory/RectangleFactory.java) реализуют интерфейс [`ShapeFactory`](./src/main/java/ru/patterns/factory/ShapeFactory.java) и предоставляют конкретные реализации метода `createShape()`, создавая соответствующие объекты [`Circle`](./src/main/java/ru/patterns/models/Circle.java] и [`Rectangle`](./src/main/java/ru/patterns/models/Rectangle.java). Эти фабрики принимают параметры, необходимые для создания объектов.
+
+### Пример кода классов Factory Method
+
+#### Интерфейс ShapeFactory
+
+```java
+public interface ShapeFactory {
+    Shape createShape();
+}
+```
+
+#### Конкретные фабрики
+
+```java
+public class RectangleFactory implements ShapeFactory {
+
+    private double width;
+    private double height;
+
+    public RectangleFactory(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public Shape createShape() {
+        return new Rectangle(width, height);
+    }
+}
+
+public class CircleFactory implements ShapeFactory {
+
+    private double radius;
+
+    public CircleFactory(double radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    public Shape createShape() {
+        return new Circle(radius);
     }
 }
 ```

@@ -36,4 +36,13 @@ public class SwaggerConfig {
                 .pathsToMatch("/canvas/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi shopApi() {
+        return GroupedOpenApi.builder()
+                .group("shop-api")
+                .packagesToScan("ru.patterns.abstractfactory.controllers")
+                .pathsToMatch("/shop/**")
+                .build();
+    }
 }

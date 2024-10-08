@@ -5,6 +5,7 @@
 - [Задание 4. Static Factory Method](#задание-4-static-factory-method)
 - [Задание 5. Builder](#задание-5-builder)
 - [Задание 6. Factory Method](#задание-6-factory-method)
+- [Задание 7. Absract Factory](#задание-7-abstract-factory)
 
 ***
 
@@ -354,3 +355,119 @@ public class CircleFactory implements ShapeFactory {
     }
 }
 ```
+
+
+# Задание 7. Abstract Factory
+
+## Описание
+
+В этом разделе описаны классы и интерфейсы, которые реализуют паттерн проектирования **Abstract Factory** для создания объектов блокнотов и блокнотов различных типов в приложении. Abstract Factory предоставляет интерфейс для создания семейства связанных или зависимых объектов без указания их конкретных классов.
+
+## Причины выбора Abstract Factory
+
+1. **Создание семейства объектов**: Паттерн Abstract Factory идеально подходит, когда нужно создать группу объектов, которые связаны между собой. В нашем случае это тетради и блокноты, каждый из которых может иметь различные реализации (школьные, офисные и дизайнерские).
+
+2. **Изоляция клиентского кода от конкретных реализаций**: Abstract Factory изолирует процесс создания объектов от их использования, что повышает гибкость и упрощает поддерживаемость кода. Пользователи фабрики взаимодействуют с общими интерфейсами, не зная деталей создания объектов.
+
+3. **Легкость расширения**: Добавление новых типов блокнотов или блокнотов возможно без изменения существующего кода. Нужно лишь создать новую реализацию фабрики и объектов, что делает систему гибкой и расширяемой.
+
+## Признаки реализации Abstract Factory
+
+- **Интерфейс `StationeryFactory`**: Этот интерфейс определяет методы для создания объектов `NoteBook` и `NotePad`, предоставляя абстракцию для всех конкретных фабрик.
+
+- **Конкретные фабрики**: Классы `OfficeStationeryFactory` и `SchoolStationeryFactory` реализуют интерфейс `StationeryFactory` и предоставляют конкретные реализации методов для создания офисных и школьных блокнотов и блокнотов соответственно.
+
+- **Интерфейсы для продуктов**: Интерфейсы `NoteBook` и `NotePad` описывают общие методы для всех блокнотов и блокнотов, позволяя реализовать различные типы этих объектов.
+
+- **Конкретные продукты**: Классы `OfficeNotebook`, `SchoolNotebook`, `SimpleNotepad` и `DesignerNotepad` представляют конкретные реализации продуктов.
+
+## Код классов Abstract Factory
+
+### Интерфейс StationeryFactory
+
+```java
+public interface StationeryFactory {
+    NoteBook createNoteBook();
+    NotePad createNotePad();
+}
+```
+
+
+### Конкретные фабрики
+
+```java
+public class OfficeStationeryFactory implements StationeryFactory {
+
+    @Override
+    public NoteBook createNoteBook() {
+        return new OfficeNotebook();
+    }
+
+    @Override
+    public NotePad createNotePad() {
+        return new SimpleNotepad();
+    }
+}
+
+public class SchoolStationeryFactory implements StationeryFactory {
+
+    @Override
+    public NoteBook createNoteBook() {
+        return new SchoolNotebook();
+    }
+
+    @Override
+    public NotePad createNotePad() {
+        return new DesignerNotepad();
+    }
+}
+```
+
+### Интерфейсы для продуктов
+
+```java
+public interface NoteBook {
+    void describe();
+}
+
+public interface NotePad {
+    void describe();
+}
+```
+
+### Конкретные продукты
+
+```java
+public class OfficeNotebook implements NoteBook {
+
+    @Override
+    public void describe() {
+        System.out.println("This is an office notebook.");
+    }
+}
+
+public class SchoolNotebook implements NoteBook {
+
+    @Override
+    public void describe() {
+        System.out.println("This is a school notebook.");
+    }
+}
+
+public class SimpleNotepad implements NotePad {
+
+    @Override
+    public void describe() {
+        System.out.println("This is a simple notepad.");
+    }
+}
+
+public class DesignerNotepad implements NotePad {
+
+    @Override
+    public void describe() {
+        System.out.println("This is a designer notepad.");
+    }
+}
+```
+

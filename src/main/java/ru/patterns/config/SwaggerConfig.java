@@ -45,4 +45,13 @@ public class SwaggerConfig {
                 .pathsToMatch("/shop/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi swaggerTemperatureApi() {
+        return GroupedOpenApi.builder()
+                .group("temperature-api")
+                .packagesToScan("ru.patterns.controllers")
+                .pathsToMatch("/temperature/**")
+                .build();
+    }
 }

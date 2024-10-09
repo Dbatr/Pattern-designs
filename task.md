@@ -6,6 +6,7 @@
 - [Задание 5. Builder](#задание-5-builder)
 - [Задание 6. Factory Method](#задание-6-factory-method)
 - [Задание 7. Absract Factory](#задание-7-abstract-factory)
+- [Задание 8. Adapter](#задание-8-adapter)
 
 ***
 
@@ -469,5 +470,83 @@ public class DesignerNotepad implements NotePad {
         System.out.println("This is a designer notepad.");
     }
 }
+```
+
+
+## Задание 8. Adapter
+
+### Описание
+
+В этом разделе описан класс `TemperatureServiceAdapter`, который реализует паттерн проектирования Adapter. Adapter позволяет несовместимым интерфейсам работать вместе, преобразуя интерфейс одного класса в ожидаемый клиентом интерфейс.
+
+### Причины выбора Adapter для `TemperatureServiceAdapter`
+
+1. **Совместимость интерфейсов**: Adapter обеспечивает совместимость между интерфейсом `TemperatureService` и классом `WeatherApiClient`, позволяя использовать его без изменений.
+
+2. **Скрытие сложности**: Адаптер скрывает сложность работы с внешним API, предоставляя простой интерфейс для получения температуры в городе.
+
+3. **Повторное использование кода**: Адаптер позволяет повторно использовать `WeatherApiClient`, снижая дублирование кода и упрощая разработку.
+
+### Признаки реализации Adapter в `TemperatureServiceAdapter`
+
+- **Имплементация целевого интерфейса**: `TemperatureServiceAdapter` реализует интерфейс `TemperatureService` с методом `getTemperature`.
+
+- **Взаимодействие с адаптируемым объектом**: Метод `getTemperature` вызывает `getCurrentWeatherData` из `WeatherApiClient` и извлекает температуру.
+
+### Реализация паттерна Adapter
+
+```java
+// Интерфейс целевого объекта
+public interface TemperatureService {
+    Double getTemperature(String city);
+}
+
+// Интерфейс адаптируемого объекта
+public interface WeatherApi {
+    Map<String, Object> getCurrentWeatherData(String city);
+}
+
+// Конкретная реализация адаптируемого объекта
+@Component
+public class WeatherApiClient implements WeatherApi {
+
+    private final RestTemplate restTemplate;
+    private final String apiKey = "6996b38d22fd438a876113325240910";
+
+    public WeatherApiClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    @Override
+    public Map getCurrentWeatherData(String city) {
+        String url = "http://api.weatherapi.com/v1/current.json?key=" + apiKey + "&q=" + city;
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+
+        return response.getBody();
+    }
+}
+
+// Адаптер
+@Service
+public class TemperatureServiceAdapter implements TemperatureService {
+
+    private final WeatherApiClient weatherApiClient;
+
+    public TemperatureServiceAdapter(WeatherApiClient weatherApiClient) {
+        this.weatherApiClient = weatherApiClient;
+    }
+
+    @Override
+    public Double getTemperature(String city) {
+        var current = (Map) weatherApiClient.getCurrentWeatherData(city).get("current");
+        return (Double) current.get("temp_c");
+    }
+}
+
+
 ```
 

@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.patterns.factory.CircleFactory;
 import ru.patterns.factory.RectangleFactory;
 import ru.patterns.factory.ShapeFactory;
+import ru.patterns.interfaces.Color;
 import ru.patterns.models.Canvas;
 import ru.patterns.models.Shape;
 import ru.patterns.services.CanvasService;
+import ru.patterns.utils.ColorUtils;
 
 import java.util.List;
 
@@ -31,17 +33,21 @@ public class CanvasController {
     @PostMapping("/{id}/addRectangle")
     public ResponseEntity<Shape> addRectangle(@PathVariable Long id,
                                               @RequestParam double width,
-                                              @RequestParam double height) {
-        ShapeFactory factory = new RectangleFactory(width, height);
-        Shape shape = canvasService.addShapeToCanvas(id, factory);
+                                              @RequestParam double height,
+                                              @RequestParam String color) {
+        Color convertedColor = ColorUtils.getColorByString(color);
+        ShapeFactory factory = new RectangleFactory(width, height, convertedColor);
+        Shape shape = canvasService.addShapeToCanvas(id, factory, convertedColor);
         return ResponseEntity.status(HttpStatus.CREATED).body(shape);
     }
 
     @PostMapping("/{id}/addCircle")
     public ResponseEntity<Shape> addCircle(@PathVariable Long id,
-                                           @RequestParam double radius) {
-        ShapeFactory factory = new CircleFactory(radius);
-        Shape shape = canvasService.addShapeToCanvas(id, factory);
+                                           @RequestParam double radius,
+                                           @RequestParam String color) {
+        Color convertedColor = ColorUtils.getColorByString(color);
+        ShapeFactory factory = new CircleFactory(radius, convertedColor);
+        Shape shape = canvasService.addShapeToCanvas(id, factory, convertedColor);
         return ResponseEntity.status(HttpStatus.CREATED).body(shape);
     }
 

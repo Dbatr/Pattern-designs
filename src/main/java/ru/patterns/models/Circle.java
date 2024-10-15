@@ -1,6 +1,7 @@
 package ru.patterns.models;
 
 import jakarta.persistence.Entity;
+import ru.patterns.interfaces.Color;
 
 @Entity
 public class Circle extends Shape {
@@ -10,7 +11,8 @@ public class Circle extends Shape {
     public Circle() {
     }
 
-    public Circle(double radius) {
+    public Circle(double radius, Color color) {
+        super(color);
         this.radius = radius;
     }
 
@@ -24,6 +26,6 @@ public class Circle extends Shape {
 
     @Override
     public String draw() {
-        return "Drawing a circle with radius: " + radius;
+        return "Drawing a circle with radius: " + radius + " - " + applyColor();
     }
 }

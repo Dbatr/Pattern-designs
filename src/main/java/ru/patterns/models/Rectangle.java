@@ -1,6 +1,7 @@
 package ru.patterns.models;
 
 import jakarta.persistence.Entity;
+import ru.patterns.interfaces.Color;
 
 @Entity
 public class Rectangle extends Shape {
@@ -11,7 +12,8 @@ public class Rectangle extends Shape {
     public Rectangle() {
     }
 
-    public Rectangle(double width, double height) {
+    public Rectangle(double width, double height, Color color) {
+        super(color);
         this.width = width;
         this.height = height;
     }
@@ -34,6 +36,6 @@ public class Rectangle extends Shape {
 
     @Override
     public String draw() {
-        return "Drawing a rectangle with width: " + width + " and height: " + height;
+        return "Drawing a rectangle with width: " + width + " and height: " + height + " - " + applyColor();
     }
 }

@@ -1,5 +1,7 @@
 # Оглавление
 
+***
+
 - [Задание 2. Singleton](#задание-2-singleton)
 - [Задание 3. Prototype](#задание-3-prototype)
 - [Задание 4. Static Factory Method](#задание-4-static-factory-method)
@@ -7,6 +9,7 @@
 - [Задание 6. Factory Method](#задание-6-factory-method)
 - [Задание 7. Absract Factory](#задание-7-abstract-factory)
 - [Задание 8. Adapter](#задание-8-adapter)
+- [Задание 9. Bridge](#задание-9-bridge)
 
 ***
 
@@ -549,4 +552,29 @@ public class TemperatureServiceAdapter implements TemperatureService {
 
 
 ```
+
+# Задание 9. Bridge
+
+<img src="assets/bridge.png" alt="Мост" width="592">
+
+## Описание
+
+В этом разделе описан класс, который реализует паттерн проектирования Bridge. Паттерн Bridge разделяет абстракцию и реализацию, позволяя изменять их независимо.
+
+## Преимущества использования паттерна Bridge:
+
+- Упрощение системы, избегая создания большого количества подклассов.
+- Возможность изменять реализацию и абстракцию независимо, что упрощает расширение системы.
+- Улучшение читаемости и поддерживаемости кода.
+
+## Пример реализации паттерна Bridge:
+
+В данном проекте используется паттерн Bridge, где абстракция представлена классом [`Shape`](./src/main/java/ru/patterns/models/Shape.java), а реализация — классами [`Color`](./src/main/java/ru/patterns/interfaces/Color.java) (например, [`RedColor`](./src/main/java/ru/patterns/models/RedColor.java) и [`BlueColor`](./src/main/java/ru/patterns/models/BlueColor.java)).
+
+- **Абстракция**: `Shape` (класс, представляющий геометрическую фигуру, с методом `draw()`, который будет использовать цвет).
+- **Реализация**: `Color` (интерфейс, определяющий методы для применения цвета).
+- **Конкретные реализации**: `RedColor` и `BlueColor` (классы, реализующие интерфейс `Color`).
+
+Такое разделение позволяет добавлять новые фигуры или цвета, не изменяя существующие классы.
+
 

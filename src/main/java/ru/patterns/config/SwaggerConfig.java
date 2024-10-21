@@ -38,6 +38,14 @@ public class SwaggerConfig {
     }
 
     @Bean
+    public GroupedOpenApi canvasFolderApi() {
+        return GroupedOpenApi.builder()
+                .group("canvas-folder-api")
+                .packagesToScan("ru.patterns.controllers")
+                .pathsToMatch("/folders/**")
+                .build();
+    }
+    @Bean
     public GroupedOpenApi shopApi() {
         return GroupedOpenApi.builder()
                 .group("shop-api")

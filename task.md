@@ -10,6 +10,7 @@
 - [Задание 7. Absract Factory](#задание-7-abstract-factory)
 - [Задание 8. Adapter](#задание-8-adapter)
 - [Задание 9. Bridge](#задание-9-bridge)
+- [Задание 10. Composite](#задание-10-composite)
 
 ***
 
@@ -578,3 +579,161 @@ public class TemperatureServiceAdapter implements TemperatureService {
 Такое разделение позволяет добавлять новые фигуры или цвета, не изменяя существующие классы.
 
 
+
+***
+
+
+## Задание 10. Composite
+
+### Описание
+
+В этом разделе описан класс `CanvasComponent`, который реализует паттерн проектирования **Composite**. Composite — это паттерн, позволяющий создавать древовидные структуры объектов, где каждая ветвь или лист структуры может обрабатываться единообразно. Он объединяет объекты в древовидные структуры для представления иерархий «часть-целое».
+
+### Причины выбора Composite для структуры «Canvas» и «Folders»
+
+1. **Удобная иерархическая структура**:
+   Composite позволяет организовать структуру объектов в виде дерева, что подходит для хранения элементов, таких как папки и холсты, в системе, где они могут быть сгруппированы в другие папки или быть листовыми элементами (например, `Canvas`). Каждый элемент в такой структуре рассматривается одинаково — будь то отдельный элемент или целая группа элементов.
+
+2. **Единая обработка компонентов**:
+   Composite обеспечивает единый интерфейс для управления как простыми объектами (например, холстами), так и составными объектами (например, папками). Это делает код более гибким и упрощает работу с элементами, позволяя использовать одну и ту же логику как для отдельных объектов, так и для их коллекций.
+
+3. **Гибкость в добавлении и удалении элементов**:
+   Composite предоставляет методы для добавления, удаления и получения компонентов в составе других компонентов. Это полезно в тех случаях, когда объекты могут быть объединены в более сложные структуры иерархии, например, когда холсты могут находиться в папках, а папки могут содержать как холсты, так и другие папки.
+
+### Признаки реализации Composite в классе `CanvasComponent`
+
+- **Абстрактный базовый класс или интерфейс**:
+  `CanvasComponent` является базовым классом, который определяет общие операции для всех компонентов иерархии, такие как методы `add()`, `remove()` и `getChildren()`. Этот класс представляет общие операции для всех объектов (папок и холстов) в структуре.
+
+- **Компоненты-листья и составные компоненты**:
+  В структуре реализованы как компоненты-листья (`Canvas`), так и составные компоненты (`CanvasFolder`), которые могут содержать другие компоненты. Это ключевая часть Composite, где листья (примитивные элементы) и составные элементы обрабатываются единообразно.
+
+- **Методы для управления дочерними элементами**:
+  В составных компонентах (например, в `CanvasFolder`) реализованы методы для добавления, удаления и получения дочерних компонентов, что делает возможным создание древовидных структур.
+
+### Реализация паттерна Composite
+
+```java
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class CanvasComponent {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public abstract void add(CanvasComponent component);
+
+    public abstract void remove(CanvasComponent component);
+
+    public abstract List<CanvasComponent> getChildren();
+}
+
+@Entity
+@Table(name = "canvas")
+public class Canvas extends CanvasComponent {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @OneToMany(mappedBy = "canvas", cascade = CascadeType.ALL)
+    private List<Shape> shapes = new ArrayList<>();
+
+    public Canvas() {
+    }
+
+    public Canvas(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void add(CanvasComponent component) {
+        throw new UnsupportedOperationException("Canvas cannot contain other components.");
+    }
+
+    @Override
+    public void remove(CanvasComponent component) {
+        throw new UnsupportedOperationException("Canvas cannot contain other components.");
+    }
+
+    @Override
+    public List<CanvasComponent> getChildren() {
+        return Collections.emptyList();
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Shape> getShapes() {
+        return shapes;
+    }
+
+    public void setShapes(List<Shape> shapes) {
+        this.shapes = shapes;
+    }
+
+    public void addShape(Shape shape) {
+        shapes.add(shape);
+        shape.setCanvas(this);
+    }
+}
+
+@Entity
+public class CanvasFolder extends CanvasComponent {
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private final List<CanvasComponent> children = new ArrayList<>();
+
+    public CanvasFolder() {
+    }
+
+    public CanvasFolder(String name) {
+        this.setName(name);
+    }
+
+    @Override
+    public void add(CanvasComponent component) {
+        children.add(component);
+    }
+
+    @Override
+    public void remove(CanvasComponent component) {
+        children.remove(component);
+    }
+
+    @Override
+    public List<CanvasComponent> getChildren() {
+        return children;
+    }
+}
+```

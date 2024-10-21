@@ -1,13 +1,18 @@
 package ru.patterns.models;
 
 import jakarta.persistence.*;
+import ru.patterns.interfaces.CanvasComponent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * Паттерн Composite.
+ */
 @Entity
 @Table(name = "canvas")
-public class Canvas {
+public class Canvas extends CanvasComponent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +40,21 @@ public class Canvas {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public void add(CanvasComponent component) {
+        throw new UnsupportedOperationException("Canvas cannot contain other components.");
+    }
+
+    @Override
+    public void remove(CanvasComponent component) {
+        throw new UnsupportedOperationException("Canvas cannot contain other components.");
+    }
+
+    @Override
+    public List<CanvasComponent> getChildren() {
+        return Collections.emptyList();
     }
 
     public void setName(String name) {

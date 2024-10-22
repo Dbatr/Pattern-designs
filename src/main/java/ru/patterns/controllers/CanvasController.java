@@ -1,15 +1,16 @@
 package ru.patterns.controllers;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.patterns.factory.CircleFactory;
 import ru.patterns.factory.RectangleFactory;
 import ru.patterns.factory.ShapeFactory;
+import ru.patterns.interfaces.CanvasServiceI;
 import ru.patterns.interfaces.Color;
 import ru.patterns.models.Canvas;
 import ru.patterns.models.Shape;
-import ru.patterns.services.CanvasService;
 import ru.patterns.utils.ColorUtils;
 
 import java.util.List;
@@ -18,9 +19,9 @@ import java.util.List;
 @RequestMapping("/canvas")
 public class CanvasController {
 
-    private final CanvasService canvasService;
+    private final CanvasServiceI canvasService;
 
-    public CanvasController(CanvasService canvasService) {
+    public CanvasController(@Qualifier("loggingDecoratedCanvasService") CanvasServiceI canvasService) {
         this.canvasService = canvasService;
     }
 

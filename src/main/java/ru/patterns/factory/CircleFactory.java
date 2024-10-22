@@ -15,6 +15,14 @@ public class CircleFactory implements ShapeFactory {
         this.color = color;
     }
 
+    public double getRadius() {
+        return radius;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
     @Override
     public Shape createShape() {
         return new Circle(radius, color);

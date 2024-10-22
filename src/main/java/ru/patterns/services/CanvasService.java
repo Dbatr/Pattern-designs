@@ -2,6 +2,7 @@ package ru.patterns.services;
 
 import org.springframework.stereotype.Service;
 import ru.patterns.factory.ShapeFactory;
+import ru.patterns.interfaces.CanvasServiceI;
 import ru.patterns.interfaces.Color;
 import ru.patterns.models.Canvas;
 import ru.patterns.models.Shape;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CanvasService {
+public class CanvasService implements CanvasServiceI {
 
     private final CanvasRepository canvasRepository;
     private final ShapeRepository shapeRepository;
@@ -23,11 +24,13 @@ public class CanvasService {
         this.shapeRepository = shapeRepository;
     }
 
+    @Override
     public Canvas createCanvas(String name) {
         Canvas canvas = new Canvas(name);
         return canvasRepository.save(canvas);
     }
 
+    @Override
     public Shape addShapeToCanvas(Long canvasId, ShapeFactory factory, Color color) {
         Optional<Canvas> canvasOptional = canvasRepository.findById(canvasId);
         if (canvasOptional.isPresent()) {
@@ -42,6 +45,7 @@ public class CanvasService {
         }
     }
 
+    @Override
     public List<Shape> getShapesOnCanvas(Long canvasId) {
         Optional<Canvas> canvasOptional = canvasRepository.findById(canvasId);
         return canvasOptional.map(Canvas::getShapes).orElse(Collections.emptyList());

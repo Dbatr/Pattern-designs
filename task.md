@@ -7,11 +7,12 @@
 - [Задание 4. Static Factory Method](#задание-4-static-factory-method)
 - [Задание 5. Builder](#задание-5-builder)
 - [Задание 6. Factory Method](#задание-6-factory-method)
-- [Задание 7. Absract Factory](#задание-7-abstract-factory)
+- [Задание 7. Abstract Factory](#задание-7-abstract-factory)
 - [Задание 8. Adapter](#задание-8-adapter)
 - [Задание 9. Bridge](#задание-9-bridge)
 - [Задание 10. Composite](#задание-10-composite)
 - [Задание 11. Decorator](#задание-11-decorator)
+- [Задание 12. Facade](#задание-12-facade)
 
 ***
 
@@ -769,3 +770,71 @@ public class CanvasFolder extends CanvasComponent {
 3. **Декоратор (Decorator)**: Абстрактный класс `CanvasServiceDecorator` выступает в роли декоратора. Он реализует интерфейс `CanvasServiceI` и содержит ссылку на объект того же типа. Его цель — делегировать выполнение операций объекту, который он декорирует, и обеспечить возможность расширения поведения.
 
 4. **Конкретный декоратор (Concrete Decorator)**: Класс `LoggingCanvasServiceDecorator` является конкретным декоратором. Он расширяет функциональность компонента, добавляя логирование действий с холстами и фигурами, при этом делегируя выполнение основной работы классу `CanvasService`.
+
+
+***
+
+
+# Задание 12. Facade
+
+## Описание
+
+В этом разделе описан класс [`StationeryShopFacade`](./src/main/java/ru/patterns/abstractfactory/services/StationeryShopFacade.java), который реализует паттерн проектирования Facade. Facade — это паттерн, который предоставляет унифицированный интерфейс для группы интерфейсов в подсистеме, упрощая использование этой подсистемы.
+
+## Причины выбора Facade для класса `StationeryShopFacade`
+
+1. **Упрощение взаимодействия**: Паттерн Facade предоставляет простой и понятный интерфейс для взаимодействия с несколькими сервисами (например, `ShopService`, `AuditService`, и `InventoryService`), что облегчает процесс покупки канцелярских товаров.
+
+2. **Инкапсуляция сложности**: `StationeryShopFacade` скрывает детали взаимодействия между различными сервисами, предоставляя пользователю удобный метод `buyItem`, который инкапсулирует всю логику покупки и проверки наличия товара.
+
+3. **Упрощение кода клиента**: Использование фасада позволяет клиентскому коду не беспокоиться о том, как устроены внутренние взаимодействия между сервисами. Это приводит к более чистому и понятному коду.
+
+## Признаки реализации Facade в классе `StationeryShopFacade`
+
+- **Составляющие сервисы**: Фасад содержит ссылки на `ShopService`, `AuditService` и `InventoryService`, что позволяет ему координировать действия между ними.
+
+- **Упрощенный интерфейс**: Метод `buyItem` служит простым интерфейсом для покупки товара, который проверяет наличие на складе, выполняет покупку, регистрирует покупку в журнале и обрабатывает случай, когда товар отсутствует.
+
+## Реализация паттерна:
+
+```java
+/**
+ * Паттерн Facade.
+ */
+@Service
+public class StationeryShopFacade {
+
+    private final ShopService shopService;
+    private final AuditService auditService;
+    private final InventoryService inventoryService;
+
+    public StationeryShopFacade(ShopService shopService, AuditService auditService, InventoryService inventoryService) {
+        this.shopService = shopService;
+        this.auditService = auditService;
+        this.inventoryService = inventoryService;
+    }
+
+    public String buyItem(String itemType) {
+        if (!inventoryService.isInStock(itemType)) {
+            auditService.outOfStock(itemType);
+            return "Sorry, " + itemType + " is out of stock.";
+        }
+
+        String purchaseMessage;
+        if ("notebook".equalsIgnoreCase(itemType)) {
+            purchaseMessage = shopService.buyNotebook();
+        } else if ("notepad".equalsIgnoreCase(itemType)) {
+            purchaseMessage = shopService.buyNotepad();
+        } else {
+            return "Item not available.";
+        }
+
+        inventoryService.reduceStock(itemType);
+        auditService.logPurchase(itemType, purchaseMessage);
+
+        return purchaseMessage;
+    }
+}
+```
+
+***

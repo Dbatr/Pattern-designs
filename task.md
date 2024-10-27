@@ -13,6 +13,7 @@
 - [Задание 10. Composite](#задание-10-composite)
 - [Задание 11. Decorator](#задание-11-decorator)
 - [Задание 12. Facade](#задание-12-facade)
+- [Задание 13. Flyweight](#задание-13-flyweight)
 
 ***
 
@@ -838,3 +839,58 @@ public class StationeryShopFacade {
 ```
 
 ***
+
+
+## Задание 13. Flyweight
+
+### Описание
+
+В этом разделе описан класс [`PenShopServiceImpl`](./src/main/java/ru/patterns/abstractfactory/services/PenShopServiceImpl.java), который реализует паттерн проектирования Flyweight. Flyweight — это паттерн, который позволяет экономить память, разделяя общее состояние объектов, вместо создания новых экземпляров для каждого уникального объекта.
+
+### Причины выбора Flyweight для класса `PenShopServiceImpl`
+
+1. **Экономия ресурсов**: Паттерн Flyweight позволяет сократить количество создаваемых объектов, храня общие состояния (например, цвет и размер пера) в кэше. Это особенно полезно, когда объекты имеют много общего состояния, что позволяет избежать дублирования.
+
+2. **Упрощение управления состоянием**: Хранение уже созданных объектов в кэше упрощает управление состоянием и повышает производительность приложения, так как нет необходимости пересоздавать объекты с одинаковыми свойствами.
+
+3. **Логирование создания объектов**: Паттерн позволяет регистрировать создание новых объектов и использование существующих, что может быть полезно для мониторинга и анализа производительности.
+
+### Признаки реализации Flyweight в классе `PenShopServiceImpl`
+
+- **Кэширование объектов**: В классе определен `Map<String, Pen> penCache`, который хранит созданные экземпляры `Pen` по уникальному ключу, основанному на цвете и размере пера. Это позволяет избежать создания дублирующихся объектов.
+
+- **Метод `buyPen`**: Метод `buyPen` использует `computeIfAbsent`, чтобы создать новый объект `Pen`, если его нет в кэше. Если объект уже существует, он просто извлекается из кэша. Это ключевая часть паттерна Flyweight, которая минимизирует количество создаваемых объектов.
+
+- **Логирование действий**: Класс использует `Logger` для регистрации создания новых объектов и использования существующих, что позволяет отслеживать использование ресурсов и производительность приложения.
+
+### Реализация паттерна Flyweight:
+
+```java
+/**
+ * Паттерн Flyweight.
+ */
+@Service
+public class PenShopServiceImpl implements PenShopService {
+
+    private final Map<String, Pen> penCache = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(PenShopServiceImpl.class);
+
+    @Override
+    public String buyPen(String color, double tipSize) {
+        String key = color + tipSize;
+
+        Pen pen = penCache.computeIfAbsent(key, k -> {
+            Pen newPen = new Pen(color, tipSize);
+            logger.info("Created new Pen: {}", newPen.getDescription());
+            return newPen;
+        });
+
+        logger.info("Using existing Pen: {}", pen.getDescription());
+
+        return "You bought a " + pen.getDescription();
+    }
+}
+```
+
+***
+

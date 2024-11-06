@@ -8,6 +8,7 @@ import ru.patterns.models.Canvas;
 import ru.patterns.models.Shape;
 import ru.patterns.repositories.CanvasRepository;
 import ru.patterns.repositories.ShapeRepository;
+import ru.patterns.utils.CanvasValidationChainBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,15 +19,22 @@ public class CanvasService implements CanvasServiceI {
 
     private final CanvasRepository canvasRepository;
     private final ShapeRepository shapeRepository;
+    private final CanvasValidationChainBuilder validationChainBuilder;
 
-    public CanvasService(CanvasRepository canvasRepository, ShapeRepository shapeRepository) {
+    public CanvasService(CanvasRepository canvasRepository, ShapeRepository shapeRepository, CanvasValidationChainBuilder validationChainBuilder) {
         this.canvasRepository = canvasRepository;
         this.shapeRepository = shapeRepository;
+        this.validationChainBuilder = validationChainBuilder;
     }
 
     @Override
     public Canvas createCanvas(String name) {
         Canvas canvas = new Canvas(name);
+
+        if (!validationChainBuilder.getValidationHandler().validate(canvas)) {
+            throw new RuntimeException("Canvas is not valid!");
+        }
+
         return canvasRepository.save(canvas);
     }
 

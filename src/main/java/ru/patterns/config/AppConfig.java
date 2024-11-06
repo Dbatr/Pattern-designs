@@ -13,14 +13,16 @@ import ru.patterns.repositories.ShapeRepository;
 import ru.patterns.services.CanvasService;
 import ru.patterns.services.NoteService;
 import ru.patterns.services.NoteServiceCacheProxy;
+import ru.patterns.utils.CanvasValidationChainBuilder;
 
 
 @Configuration
 public class AppConfig {
 
     @Bean(name = "loggingDecoratedCanvasService")
-    public CanvasServiceI canvasService(CanvasRepository canvasRepository, ShapeRepository shapeRepository) {
-        CanvasServiceI originalService = new CanvasService(canvasRepository, shapeRepository);
+    public CanvasServiceI canvasService(CanvasRepository canvasRepository, ShapeRepository shapeRepository,
+                                        CanvasValidationChainBuilder validationChainBuilder) {
+        CanvasServiceI originalService = new CanvasService(canvasRepository, shapeRepository, validationChainBuilder);
         return new LoggingCanvasServiceDecorator(originalService);
     }
 

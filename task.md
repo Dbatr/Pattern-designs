@@ -14,6 +14,7 @@
 - [Задание 11. Decorator](#задание-11-decorator)
 - [Задание 12. Facade](#задание-12-facade)
 - [Задание 13. Flyweight](#задание-13-flyweight)
+- [Задание 14. Proxy](#задание-14-proxy)
 
 ***
 
@@ -893,4 +894,87 @@ public class PenShopServiceImpl implements PenShopService {
 ```
 
 ***
+
+## Задание 14. Proxy
+
+#### Описание
+
+В этом разделе рассматривается паттерн Proxy, который используется для создания заместителей или прокси-объектов, которые контролируют доступ к реальному объекту. Паттерн Proxy может быть полезен для внедрения дополнительных слоев безопасности, кэширования или логирования при взаимодействии с объектами, а также для ленивой инициализации.
+
+### Причины выбора Proxy для класса `NoteService`
+
+1. **Кэширование результатов**: Паттерн Proxy позволяет кэшировать результаты запросов, чтобы ускорить доступ к часто запрашиваемым данным. В примере с `NoteServiceCacheProxy`, данные о заметках кэшируются, что позволяет ускорить доступ к заметкам, уже полученным ранее.
+
+
+### Признаки реализации Proxy в классе `NoteServiceCacheProxy`
+
+- **Прокси-объект**: Класс `NoteServiceCacheProxy` выполняет роль прокси для `NoteService`. Он перехватывает все вызовы методов, делая дополнительные действия, такие как кэширование, перед передачей их реальному объекту `NoteService`.
+
+- **Кэширование данных**: В `NoteServiceCacheProxy` используется внутренний кэш (`cache`), который хранит данные о заметках. Когда заметка запрашивается, сначала проверяется кэш, и если заметка уже была получена ранее, она возвращается из кэша, что ускоряет дальнейшие запросы.
+
+- **Логирование действий**: Для каждого метода, проксирующего действия с заметками, добавлены сообщения логирования, чтобы отслеживать, из какого источника (кэш или база данных) были получены данные.
+
+### Пример кода класса `NoteServiceCacheProxy`:
+
+```java
+/**
+ * Паттерн Proxy.
+ */
+public class NoteServiceCacheProxy implements NoteServiceI {
+    private final NoteServiceI noteService;
+    private final Map<Long, Note> cache = new HashMap<>();
+
+    public NoteServiceCacheProxy(NoteServiceI noteService) {
+        this.noteService = noteService;
+    }
+
+    @Override
+    public List<Note> getAllNotes() {
+        return noteService.getAllNotes();
+    }
+
+    @Override
+    public Optional<Note> getNoteById(Long id) {
+        if (cache.containsKey(id)) {
+            System.out.println("Получение заметки из кэша: " + id);
+            return Optional.of(cache.get(id));
+        }
+        Optional<Note> note = noteService.getNoteById(id);
+        note.ifPresent(value -> cache.put(id, value));
+        System.out.println("Добавление заметки в кэш: " + id);
+        return note;
+    }
+
+    @Override
+    public Note addNote(NoteDTO noteDto) {
+        Note note = noteService.addNote(noteDto);
+        cache.put(note.getId(), note);
+        System.out.println("Добавление заметки в кэш: " + note.getId());
+        return note;
+    }
+
+    @Override
+    public void deleteNoteById(Long id) {
+        noteService.deleteNoteById(id);
+        cache.remove(id);
+        System.out.println("Удаление заметки из кэша: " + id);
+    }
+
+    @Override
+    public Optional<Note> duplicateNoteById(Long id) {
+        Optional<Note> duplicatedNote = noteService.duplicateNoteById(id);
+        duplicatedNote.ifPresent(note -> cache.put(note.getId(), note));
+        System.out.println("Копирование заметки в кэш: " + id);
+        return duplicatedNote;
+    }
+
+    @Override
+    public Optional<Note> updateNoteById(Long id, String newTitle, String newContent) {
+        Optional<Note> updatedNote = noteService.updateNoteById(id, newTitle, newContent);
+        updatedNote.ifPresent(note -> cache.put(id, note));
+        System.out.println("Обновление заметки в кэше: " + id);
+        return updatedNote;
+    }
+}
+```
 

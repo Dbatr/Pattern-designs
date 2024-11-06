@@ -7,9 +7,12 @@ import ru.patterns.abstractfactory.factory.StationeryFactory;
 import ru.patterns.abstractfactory.factory.SchoolStationeryFactory;
 import ru.patterns.decorator.LoggingCanvasServiceDecorator;
 import ru.patterns.interfaces.CanvasServiceI;
+import ru.patterns.interfaces.NoteServiceI;
 import ru.patterns.repositories.CanvasRepository;
 import ru.patterns.repositories.ShapeRepository;
 import ru.patterns.services.CanvasService;
+import ru.patterns.services.NoteService;
+import ru.patterns.services.NoteServiceCacheProxy;
 
 
 @Configuration
@@ -29,5 +32,10 @@ public class AppConfig {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    public NoteServiceI cachedNoteService(NoteService noteService) {
+        return new NoteServiceCacheProxy(noteService);
     }
 }

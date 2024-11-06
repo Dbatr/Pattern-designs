@@ -1,6 +1,7 @@
 package ru.patterns.services;
 
 import ru.patterns.dto.NoteDTO;
+import ru.patterns.interfaces.NoteServiceI;
 import ru.patterns.models.Note;
 import java.util.List;
 import java.util.Optional;
@@ -12,21 +13,21 @@ import ru.patterns.utils.NoteUtils;
  * Паттерн Singleton.
  */
 @Service
-public class NoteService {
+public class NoteService implements NoteServiceI {
 
     private final NoteRepository noteRepository;
-    private static NoteService instance;
+//    private static NoteService instance;
 
     private NoteService(NoteRepository noteRepository) {
         this.noteRepository = noteRepository;
     }
 
-    public static NoteService getInstance(NoteRepository noteRepository) {
-        if (instance == null) {
-            instance = new NoteService(noteRepository);
-        }
-        return instance;
-    }
+//    public static NoteService getInstance(NoteRepository noteRepository) {
+//        if (instance == null) {
+//            instance = new NoteService(noteRepository);
+//        }
+//        return instance;
+//    }
 
     /**
      * Получает список всех заметок.

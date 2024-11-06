@@ -1,6 +1,8 @@
 package ru.patterns.controllers;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import ru.patterns.dto.NoteDTO;
+import ru.patterns.interfaces.NoteServiceI;
 import ru.patterns.models.Note;
 import ru.patterns.repositories.NoteRepository;
 import ru.patterns.services.NoteService;
@@ -16,10 +18,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/notes")
 public class NoteController {
 
-    private final NoteService noteService;
+    private final NoteServiceI noteService;
 
-    public NoteController(NoteRepository noteRepository) {
-        this.noteService = NoteService.getInstance(noteRepository);
+    public NoteController(@Qualifier("cachedNoteService") NoteServiceI noteService) {
+        this.noteService = noteService;
     }
 
     @GetMapping

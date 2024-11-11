@@ -9,6 +9,8 @@ import ru.patterns.factory.RectangleFactory;
 import ru.patterns.factory.ShapeFactory;
 import ru.patterns.interfaces.CanvasServiceI;
 import ru.patterns.interfaces.Color;
+import ru.patterns.interpreter.CommandExpression;
+import ru.patterns.interpreter.CommandParser;
 import ru.patterns.models.Canvas;
 import ru.patterns.models.Shape;
 import ru.patterns.utils.ColorUtils;
@@ -20,9 +22,11 @@ import java.util.List;
 public class CanvasController {
 
     private final CanvasServiceI canvasService;
+    private final CommandParser commandParser;
 
-    public CanvasController(@Qualifier("loggingDecoratedCanvasService") CanvasServiceI canvasService) {
+    public CanvasController(@Qualifier("loggingDecoratedCanvasService") CanvasServiceI canvasService, CommandParser commandParser) {
         this.canvasService = canvasService;
+        this.commandParser = commandParser;
     }
 
     @PostMapping
@@ -56,5 +60,16 @@ public class CanvasController {
     public ResponseEntity<List<Shape>> getShapesOnCanvas(@PathVariable Long id) {
         List<Shape> shapes = canvasService.getShapesOnCanvas(id);
         return ResponseEntity.ok(shapes);
+    }
+
+    @PostMapping("/executeCommand")
+    public ResponseEntity<String> executeCommand(@RequestParam String command) {
+        CommandExpression commandExpression = commandParser.parseCommand(command);
+        if (commandExpression != null) {
+            commandExpression.interpret(canvasService);
+            return ResponseEntity.ok("Canvas created successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid command");
+        }
     }
 }

@@ -2,6 +2,7 @@ package ru.patterns.services.commands;
 
 import org.springframework.stereotype.Component;
 import ru.patterns.dto.NoteDTO;
+import ru.patterns.mediator.SimpleMediator;
 import ru.patterns.repositories.NoteRepository;
 
 /**
@@ -11,9 +12,11 @@ import ru.patterns.repositories.NoteRepository;
 public class CommandFactory {
 
     private final NoteRepository noteRepository;
+    private final SimpleMediator mediator;
 
-    public CommandFactory(NoteRepository noteRepository) {
+    public CommandFactory(NoteRepository noteRepository, SimpleMediator mediator) {
         this.noteRepository = noteRepository;
+        this.mediator = mediator;
     }
 
     public Command create(int commandCode, Object... params) {
@@ -22,7 +25,7 @@ public class CommandFactory {
                     new GetAllNotesCommand(noteRepository);
 
             case CommandType.ADD_NOTE ->
-                    new AddNoteCommand(noteRepository, (NoteDTO) params[0]);
+                    new AddNoteCommand(noteRepository, (NoteDTO) params[0], mediator);
 
             case CommandType.GET_NOTE_BY_ID ->
                     new GetNoteByIdCommand(noteRepository, (Long) params[0]);

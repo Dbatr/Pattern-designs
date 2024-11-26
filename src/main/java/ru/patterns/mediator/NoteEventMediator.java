@@ -33,7 +33,7 @@ public class NoteEventMediator implements SimpleMediator {
                     eventTime.plusDays(1),
                     false
             );
-            eventService.createEvent(newEvent);
+            eventService.createEventToNotify(newEvent);
             System.out.println("Создано событие на основе заметки: " + newEvent.getName());
         }
     }

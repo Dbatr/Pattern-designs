@@ -2,6 +2,8 @@ package ru.patterns.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import ru.patterns.memento.EventMemento;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -73,5 +75,17 @@ public class Event {
 
     public void setCompleted(boolean completed) {
         isCompleted = completed;
+    }
+
+    public EventMemento saveState() {
+        return new EventMemento(name, description, eventDate, isAllDay, isCompleted);
+    }
+
+    public void restoreState(EventMemento memento) {
+        this.name = memento.name();
+        this.description = memento.description();
+        this.eventDate = memento.eventDate();
+        this.isAllDay = memento.isAllDay();
+        this.isCompleted = memento.isCompleted();
     }
 }

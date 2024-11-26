@@ -7,16 +7,20 @@ import ru.patterns.interfaces.EventServiceI;
 import ru.patterns.memento.EventCaretaker;
 import ru.patterns.memento.EventMemento;
 import ru.patterns.models.Event;
+import ru.patterns.observer.Observed;
+import ru.patterns.observer.Observer;
 import ru.patterns.repositories.EventRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class EventService implements EventServiceI {
+public class EventService implements EventServiceI, Observed {
 
     private final EventRepository eventRepository;
     private final EventCaretaker caretaker = new EventCaretaker();
+    private final List<Observer> observers = new ArrayList<>();
 
     @Autowired
     public EventService(EventRepository eventRepository) {
@@ -43,6 +47,8 @@ public class EventService implements EventServiceI {
         );
         event.setCompleted(eventDto.isCompleted());
         eventRepository.save(event);
+
+        notifyObservers("New event created: " + event.getName());
     }
 
     @Override
@@ -59,6 +65,9 @@ public class EventService implements EventServiceI {
             event.setEventDate(updatedEventDto.getEventDate());
             event.setAllDay(updatedEventDto.isAllDay());
             event.setCompleted(updatedEventDto.isCompleted());
+
+            notifyObservers("Event updated: " + event.getName());
+
             return eventRepository.save(event);
         }
         return null;
@@ -78,6 +87,9 @@ public class EventService implements EventServiceI {
             EventMemento memento = caretaker.undo();
             if (memento != null) {
                 event.restoreState(memento);
+
+                notifyObservers("Event restored: " + event.getName());
+
                 return eventRepository.save(event);
             }
         }
@@ -87,5 +99,22 @@ public class EventService implements EventServiceI {
     @Override
     public void createEventToNotify(Event newEvent) {
         eventRepository.save(newEvent);
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String message) {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
     }
 }

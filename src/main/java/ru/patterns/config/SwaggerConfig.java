@@ -71,4 +71,13 @@ public class SwaggerConfig {
                 .pathsToMatch("/events/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi contentNoteApi() {
+        return GroupedOpenApi.builder()
+                .group("contentnote-api")
+                .packagesToScan("ru.patterns.controllers")
+                .pathsToMatch("/contentnotes/**")
+                .build();
+    }
 }

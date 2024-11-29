@@ -1,8 +1,11 @@
 package ru.patterns.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import ru.patterns.memento.EventMemento;
+import ru.patterns.state.CreatedState;
+import ru.patterns.state.EventState;
 
 import java.time.LocalDateTime;
 
@@ -22,7 +25,24 @@ public class Event {
     private boolean isAllDay;
     private boolean isCompleted;
 
+    @JsonIgnore
+    @Transient
+    private EventState state;
+
+    public void setState(EventState state) {
+        this.state = state;
+    }
+
+    public EventState getState() {
+        return state;
+    }
+
+    public void handle() {
+        state.handle(this);
+    }
+
     public Event() {
+        this.state = new CreatedState();
     }
 
     public Event(String name, String description, LocalDateTime eventDate, boolean isAllDay) {
@@ -31,6 +51,8 @@ public class Event {
         this.eventDate = eventDate;
         this.isAllDay = isAllDay;
         this.isCompleted = false;
+
+        this.state = new CreatedState();
     }
 
     public Long getId() {

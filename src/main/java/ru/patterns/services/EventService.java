@@ -45,10 +45,12 @@ public class EventService implements EventServiceI, Observed {
                 eventDto.getEventDate(),
                 eventDto.isAllDay()
         );
-        event.setCompleted(eventDto.isCompleted());
+
         eventRepository.save(event);
 
         notifyObservers("New event created: " + event.getName());
+
+        event.handle();
     }
 
     @Override
@@ -57,6 +59,8 @@ public class EventService implements EventServiceI, Observed {
 
         if (existingEvent.isPresent()) {
             Event event = existingEvent.get();
+
+            event.handle();
 
             caretaker.save(event.saveState());
 

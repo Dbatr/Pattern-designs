@@ -80,4 +80,13 @@ public class SwaggerConfig {
                 .pathsToMatch("/contentnotes/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi ThemeApi() {
+        return GroupedOpenApi.builder()
+                .group("theme-api")
+                .packagesToScan("ru.patterns.controllers")
+                .pathsToMatch("/themes/**")
+                .build();
+    }
 }

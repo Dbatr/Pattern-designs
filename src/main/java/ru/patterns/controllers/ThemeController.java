@@ -4,6 +4,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.patterns.dto.ThemeRequestDTO;
 import ru.patterns.models.Theme;
 import ru.patterns.templateMethod.ThemeService;
+import ru.patterns.visitor.GenerateImageVisitor;
+import ru.patterns.visitor.ReportVisitor;
+import ru.patterns.visitor.ThemeVisitor;
 
 import java.util.List;
 
@@ -30,5 +33,21 @@ public class ThemeController {
     @GetMapping("/")
     public List<Theme> getAllThemes() {
         return themeService.getAllThemes();
+    }
+
+    @GetMapping("/report")
+    public String getThemeReport(@RequestParam Long themeId) {
+        Theme theme = themeService.findById(themeId);
+        ThemeVisitor reportVisitor = new ReportVisitor();
+        theme.accept(reportVisitor);
+        return "Report generated.";
+    }
+
+    @GetMapping("/generateImage")
+    public String getColorUsage(@RequestParam Long themeId) {
+        Theme theme = themeService.findById(themeId);
+        ThemeVisitor colorUsageVisitor = new GenerateImageVisitor();
+        theme.accept(colorUsageVisitor);
+        return "Image generated.";
     }
 }

@@ -39,4 +39,8 @@ public class ThemeService {
     public List<Theme> getAllThemes() {
         return themeRepository.findAll();
     }
+
+    public Theme findById(Long themeId) {
+        return themeRepository.findById(themeId).orElse(null);
+    }
 }

@@ -1,10 +1,12 @@
 package ru.patterns.models;
 
 import jakarta.persistence.*;
+import ru.patterns.visitor.ThemeElement;
+import ru.patterns.visitor.ThemeVisitor;
 
 @Entity
 @Table(name = "themes")
-public class Theme {
+public class Theme implements ThemeElement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,4 +57,8 @@ public class Theme {
         this.font = font;
     }
 
+    @Override
+    public void accept(ThemeVisitor visitor) {
+        visitor.visit(this);
+    }
 }
